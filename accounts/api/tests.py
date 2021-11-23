@@ -1,12 +1,15 @@
 from django.test import TestCase
 # Create your tests here.
 from django.test import TestCase
+from testing.testcases import TestCase
 from rest_framework.test import APIClient
 from django.contrib.auth.models import User
 LOGIN_URL = '/api/accounts/login/'
 LOGOUT_URL = '/api/accounts/logout/'
 SIGNUP_URL = '/api/accounts/signup/'
 LOGIN_STATUS_URL = '/api/accounts/login_status/'
+
+
 class AccountApiTests(TestCase):
     def setUp(self):
         # 这个函数会在每个 test function 执行的时候被执行
@@ -16,10 +19,12 @@ class AccountApiTests(TestCase):
             email='admin@jiuzhang.com',
             password='correct password',
         )
-    def createUser(self, username, email, password):
-        # 不能写成 User.objects.create()
-        # 因为 password 需要被加密, username 和 email 需要进行一些 normalize 处理
-        return User.objects.create_user(username, email, password)
+
+    # def createUser(self, username, email, password):
+    #     # 不能写成 User.objects.create()
+    #     # 因为 password 需要被加密, username 和 email 需要进行一些 normalize 处理
+    #     return User.objects.create_user(username, email, password)
+
     def test_login(self):
         # 每个测试函数必须以 test_ 开头，才会被自动调用进行测试 # 测试必须用 post 而不是 get
         response = self.client.get(LOGIN_URL, {
@@ -35,7 +40,7 @@ class AccountApiTests(TestCase):
         self.assertEqual(response.status_code, 400)
         # 验证还没有登录
         response = self.client.get(LOGIN_STATUS_URL)
-        self.assertEqual(response.data['has_logged_in'], False)
+        self.assertEqual(response .data['has_logged_in'], False)
         # 用正确的密码
         response = self.client.post(LOGIN_URL, {
             'username': self.user.username,
@@ -47,6 +52,7 @@ class AccountApiTests(TestCase):
         # 验证已经登录了
         response = self.client.get(LOGIN_STATUS_URL)
         self.assertEqual(response.data['has_logged_in'], True)
+
     def test_logout(self):
         # 先登录
         self.client.post(LOGIN_URL, {
@@ -65,6 +71,7 @@ class AccountApiTests(TestCase):
         # 验证用户已经登出
         response = self.client.get(LOGIN_STATUS_URL)
         self.assertEqual(response.data['has_logged_in'], False)
+
     def test_signup(self):
         data = {
             'username': 'someone',
