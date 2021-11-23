@@ -1,17 +1,22 @@
-
+from botocore.exceptions import ValidationError
 from django.contrib.auth.models import User
 from rest_framework import serializers, exceptions
+
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ('username', 'email')
+
 class SignupSerializer(serializers.ModelSerializer):
     username = serializers.CharField(max_length=20, min_length=6)
     password = serializers.CharField(max_length=20, min_length=6)
     email = serializers.EmailField()
+
     class Meta:
         model = User
         fields = ('username', 'email', 'password')
+
     def validate(self, data):
         # TODO<HOMEWORK> 增加验证 username 是不是只由给定的字符集合构成
 
@@ -24,6 +29,8 @@ class SignupSerializer(serializers.ModelSerializer):
                 'message': 'This email address has been occupied.'
             })
         return data
+
+
     def create(self, validated_data):
         username = validated_data['username'].lower()
         email = validated_data['email'].lower()
@@ -34,7 +41,20 @@ class SignupSerializer(serializers.ModelSerializer):
             password=password,
         )
         return user
+
+
 class LoginSerializer(serializers.Serializer):
+
     username = serializers.CharField()
     password = serializers.CharField()
+
+
+    def validate(self,attrs):
+        username = attrs['username'].lower()
+        if not User.objects.filter(username=username).exists():
+            raise ValidationError({'username': 'User does not exist.'})
+        attrs['username'] = username
+        return attrs
+
+
 
