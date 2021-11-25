@@ -1,10 +1,10 @@
 from rest_framework import serializers
 from tweets.models import Tweet
-from accounts.api.serializers import UserSerializerForTweet
+from accounts.api.serializers import UserSerializer
 
 
 class TweetSerializer(serializers.ModelSerializer):
-    user = UserSerializerForTweet()
+    user = UserSerializer()
 
     class Meta:
         model = Tweet
