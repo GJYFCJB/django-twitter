@@ -10,5 +10,3 @@ class TweetAdmin(admin.ModelAdmin):
         'user',
         'content',
     )
-
-

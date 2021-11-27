@@ -2,8 +2,6 @@ from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
-
-
 from friendships.models import Friendship
 from friendships.api.serializers import (
     FollowingSerializer,
@@ -20,7 +18,7 @@ class FriendshipViewSet(viewsets.GenericViewSet):
     # 因为 detail=True 的 actions 会默认先去调用 get_object() 也就是
     # queryset.filter(pk=1) 查询一下这个 object 在不在
     queryset = User.objects.all()
-    serializer_class = FriendshipSerializerForCreate
+
     @action(methods=['GET'], detail=True, permission_classes=[AllowAny])
     def followers(self, request, pk):
         friendships = Friendship.objects.filter(to_user_id=pk).order_by('-created_at')
@@ -39,11 +37,7 @@ class FriendshipViewSet(viewsets.GenericViewSet):
             status=status.HTTP_200_OK,
         )
 
-    def list(self, request):
-        return Response({'message': 'this is friendships home page'})
-
     @action(methods=['POST'], detail=True, permission_classes=[IsAuthenticated])
-
     def follow(self, request, pk):
         # 特殊判断重复 follow 的情况（比如前端猛点好多少次 follow)
         # 静默处理，不报错，因为这类重复操作因为网络延迟的原因会比较多，没必要当做错误处理
@@ -62,10 +56,7 @@ class FriendshipViewSet(viewsets.GenericViewSet):
                 'errors': serializer.errors,
             }, status=status.HTTP_400_BAD_REQUEST)
         serializer.save()
-        return Response(
-            {'success': True},
-            status=status.HTTP_201_CREATED
-        )
+        return Response({'success': True}, status=status.HTTP_201_CREATED)
 
     @action(methods=['POST'], detail=True, permission_classes=[IsAuthenticated])
     def unfollow(self, request, pk):
