@@ -10,6 +10,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UserSerializerWithProfile(UserSerializer):
+    ##user.profile.nickname get information
     nickname = serializers.CharField(source='profile.nickname')
     avatar_url = serializers.SerializerMethodField()
 
@@ -77,7 +78,7 @@ class LoginSerializer(serializers.Serializer):
     username = serializers.CharField()
     password = serializers.CharField()
 
-
+##default which parts will be renewed
 class UserProfileSerializerForUpdate(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
