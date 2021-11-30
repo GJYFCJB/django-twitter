@@ -23,23 +23,23 @@ class CommentApiTests(TestCase):
         self.tweet = self.create_tweet(self.linghu)
 
     def test_create(self):
-        # 匿名不可以创建
+        # Anonymous cannot be created
         response = self.anonymous_client.post(COMMENT_URL)
         self.assertEqual(response.status_code, 403)
 
-        # 啥参数都没带不行
+        # No parameters are not allowed
         response = self.linghu_client.post(COMMENT_URL)
         self.assertEqual(response.status_code, 400)
 
-        # 只带 tweet_id 不行
+        # only has tweet_id is not allowed
         response = self.linghu_client.post(COMMENT_URL, {'tweet_id': self.tweet.id})
         self.assertEqual(response.status_code, 400)
 
-        # 只带 content 不行
+        # only has content is not allowed
         response = self.linghu_client.post(COMMENT_URL, {'content': '1'})
         self.assertEqual(response.status_code, 400)
 
-        # content 太长不行
+        # content too long is not allowed
         response = self.linghu_client.post(COMMENT_URL, {
             'tweet_id': self.tweet.id,
             'content': '1' * 141,
@@ -47,7 +47,7 @@ class CommentApiTests(TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual('content' in response.data['errors'], True)
 
-        # tweet_id 和 content 都带才行
+        # both tweet_id and content
         response = self.linghu_client.post(COMMENT_URL, {
             'tweet_id': self.tweet.id,
             'content': '1',
@@ -61,7 +61,7 @@ class CommentApiTests(TestCase):
         comment = self.create_comment(self.linghu, self.tweet)
         url = '{}{}/'.format(COMMENT_URL, comment.id)
 
-        # 匿名不可以删除
+        # Anonymous cannot be created
         response = self.anonymous_client.delete(url)
         self.assertEqual(response.status_code, 403)
 

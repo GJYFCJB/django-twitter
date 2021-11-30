@@ -1,6 +1,6 @@
 from rest_framework.permissions import BasePermission
 
-
+##move from comments api
 class IsObjectOwner(BasePermission):
     """
     这个 Permission 负责检查 obj.user 是不是 == request.user
