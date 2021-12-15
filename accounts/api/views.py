@@ -29,7 +29,6 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = (permissions.IsAdminUser,)
 
 
-##api accounts
 class AccountViewSet(viewsets.ViewSet):
     permission_classes = (AllowAny,)
     serializer_class = SignupSerializer
@@ -111,11 +110,11 @@ class AccountViewSet(viewsets.ViewSet):
             data['user'] = UserSerializer(request.user).data
         return Response(data)
 
-##update partial renew
+
 class UserProfileViewSet(
     viewsets.GenericViewSet,
     viewsets.mixins.UpdateModelMixin,
 ):
     queryset = UserProfile
-    permission_classes = (permissions.IsAuthenticated, IsObjectOwner,)
+    permission_classes = (IsObjectOwner,)
     serializer_class = UserProfileSerializerForUpdate
