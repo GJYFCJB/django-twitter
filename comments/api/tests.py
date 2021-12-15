@@ -23,23 +23,23 @@ class CommentApiTests(TestCase):
         self.tweet = self.create_tweet(self.linghu)
 
     def test_create(self):
-        # Anonymous cannot be created
+        # 匿名不可以创建
         response = self.anonymous_client.post(COMMENT_URL)
         self.assertEqual(response.status_code, 403)
 
-        # No parameters are not allowed
+        # 啥参数都没带不行
         response = self.linghu_client.post(COMMENT_URL)
         self.assertEqual(response.status_code, 400)
 
-        # only has tweet_id is not allowed
+        # 只带 tweet_id 不行
         response = self.linghu_client.post(COMMENT_URL, {'tweet_id': self.tweet.id})
         self.assertEqual(response.status_code, 400)
 
-        # only has content is not allowed
+        # 只带 content 不行
         response = self.linghu_client.post(COMMENT_URL, {'content': '1'})
         self.assertEqual(response.status_code, 400)
 
-        # content too long is not allowed
+        # content 太长不行
         response = self.linghu_client.post(COMMENT_URL, {
             'tweet_id': self.tweet.id,
             'content': '1' * 141,
@@ -47,7 +47,7 @@ class CommentApiTests(TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertEqual('content' in response.data['errors'], True)
 
-        # both tweet_id and content
+        # tweet_id 和 content 都带才行
         response = self.linghu_client.post(COMMENT_URL, {
             'tweet_id': self.tweet.id,
             'content': '1',
@@ -61,7 +61,7 @@ class CommentApiTests(TestCase):
         comment = self.create_comment(self.linghu, self.tweet)
         url = '{}{}/'.format(COMMENT_URL, comment.id)
 
-        # Anonymous cannot be created
+        # 匿名不可以删除
         response = self.anonymous_client.delete(url)
         self.assertEqual(response.status_code, 403)
 
@@ -151,7 +151,7 @@ class CommentApiTests(TestCase):
         self.create_comment(self.linghu, tweet)
         response = self.dongxie_client.get(TWEET_LIST_API, {'user_id': self.linghu.id})
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data['tweets'][0]['comments_count'], 1)
+        self.assertEqual(response.data['results'][0]['comments_count'], 1)
 
         # test newsfeeds list api
         self.create_comment(self.dongxie, tweet)
